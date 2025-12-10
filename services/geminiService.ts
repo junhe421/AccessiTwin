@@ -8,6 +8,7 @@ const analysisSchema: Schema = {
   properties: {
     deviceName: { type: Type.STRING, description: "Name of the device (e.g., Samsung Washing Machine or Ibuprofen Bottle)" },
     summary: { type: Type.STRING, description: "Short description of what the device does" },
+    safetyWarning: { type: Type.STRING, description: "CRITICAL: Any immediate safety risks, heat warnings, or high voltage alerts found on the device." },
     controls: {
       type: Type.ARRAY,
       items: {
@@ -24,7 +25,7 @@ const analysisSchema: Schema = {
               ControlType.DISPLAY
             ] 
           },
-          description: { type: Type.STRING, description: "Location on physical device (e.g. 'Large round dial in center')" },
+          description: { type: Type.STRING, description: "Precise physical location using CLOCK FACE directions (e.g., 'At 3 o'clock position', 'Center', 'Bottom Left')." },
           category: { 
             type: Type.STRING, 
             enum: [
@@ -34,7 +35,7 @@ const analysisSchema: Schema = {
               ControlCategory.DANGER
             ] 
           },
-          detailText: { type: Type.STRING, description: "The full extracted text or detailed instruction optimized for Text-to-Speech. Write this as if speaking to a blind user. Include the action and the result. Example: 'Pressing this starts the Quick Wash cycle which lasts 15 minutes.'" }
+          detailText: { type: Type.STRING, description: "Detailed content. Use numbered steps for actions, or bullet points for information. Separate lines with \\n." }
         },
         required: ["id", "label", "type", "description", "category", "detailText"]
       }
@@ -62,17 +63,18 @@ export const analyzeDeviceImage = async (base64Image: string, mimeType: string =
             {
               text: `Analyze this image of a physical interface or label. Act as an accessibility expert creating a "Digital Twin" for a visually impaired user. 
               
-              1. Identify the device or object.
-              2. Extract all functional controls or informational sections.
-              3. Simplify labels for clarity.
-              4. For 'detailText', provide the content ready for Text-to-Speech.
-                 - IF BUTTON/KNOB: Describe what happens when used. E.g., "Start Button. Pressing this will begin the standard washing cycle."
-                 - IF INSTRUCTION/LABEL: Read the text clearly. E.g., "Dosage Instructions. Take one tablet every 4 hours. Do not exceed 6 tablets."
+              1. SAFETY FIRST: Immediately scan for danger symbols, heat warnings, or caution text. Put this in 'safetyWarning'.
+              2. Identify the device.
+              3. Extract controls. 
+                 - Use CLOCK FACE directions for 'description' to help a blind user find the physical button (e.g., "Round button at 2 o'clock").
+                 - Simplify labels.
+              4. For 'detailText', adapt the format to the control type:
+                 - IF it is an actionable control (e.g., button, knob): Provide a numbered list of execution steps (e.g., "1. Press and hold.\n2. Wait for light.").
+                 - IF it is informational (e.g., label, screen, ingredients): Use a bulleted list or clear paragraphs.
+                 - CRITICAL: Always insert a newline character (\\n) between each step or bullet point.
               5. Categorize controls: 
-                 - PRIMARY: The main actions or most critical info.
-                 - SECONDARY: Important settings.
-                 - ADVANCED: Rare settings.
-                 - DANGER: Reset, Delete.
+                 - PRIMARY: Main tasks.
+                 - DANGER: Reset, Self-Destruct, or Unsafe buttons.
               6. Return strict JSON.`
             }
           ]

@@ -18,12 +18,13 @@ export interface DeviceControl {
   type: ControlType;
   description: string; // Physical description for context (e.g., "Top right red button")
   category: ControlCategory;
-  detailText: string; // The extracted content or detailed instruction to be read aloud
+  detailText: string; // Step-by-step instructions (e.g. "Step 1: Turn dial. Step 2: Press Start.")
 }
 
 export interface DeviceAnalysis {
   deviceName: string;
   summary: string;
+  safetyWarning?: string; // Critical warnings (e.g. "Hot Surface", "High Voltage")
   controls: DeviceControl[];
 }
 

@@ -44,7 +44,7 @@ export const DetailView: React.FC<Props> = ({ control, onBack }) => {
         </h2>
         
         <div className="space-y-6 w-full">
-          <p className="text-4xl md:text-5xl font-medium leading-relaxed text-white">
+          <p className="text-4xl md:text-5xl font-medium leading-relaxed text-white whitespace-pre-wrap">
             {control.detailText}
           </p>
 

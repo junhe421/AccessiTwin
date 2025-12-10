@@ -84,7 +84,23 @@ export default function App() {
           </div>
         </header>
 
-        <div className="max-w-md mx-auto p-4">
+        {/* Safety Warning Banner */}
+        {analysis.safetyWarning && (
+          <div 
+            className="mx-4 mt-6 p-6 bg-red-900 border-l-8 border-red-500 rounded-r-xl shadow-lg"
+            role="alert"
+          >
+            <div className="flex items-center gap-3 mb-2">
+              <span className="text-3xl" aria-hidden="true">⚠️</span>
+              <h2 className="text-2xl font-extrabold text-red-100 uppercase tracking-wider">Safety Warning</h2>
+            </div>
+            <p className="text-xl text-white font-bold leading-relaxed">
+              {analysis.safetyWarning}
+            </p>
+          </div>
+        )}
+
+        <div className="max-w-md mx-auto p-4 pt-8">
           
           {/* Primary Controls - Always Visible */}
           <section aria-labelledby="primary-heading" className="mb-8">
